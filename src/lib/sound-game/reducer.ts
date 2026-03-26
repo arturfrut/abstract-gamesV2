@@ -1,4 +1,4 @@
-import { GameState, Team } from '@/types/sound-game'
+import { Difficulty, GameState, Team } from '@/types/sound-game'
 import { getRandomCategory, getRandomCard } from './utils'
 
 type Action =

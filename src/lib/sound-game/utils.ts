@@ -1,5 +1,5 @@
 import { cards, CATEGORIES } from './cards'
-import { Card } from '@/types/sound-game'
+import { Card, Difficulty } from '@/types/sound-game'
 
 export function getRandomCategory(): string {
   const index = Math.floor(Math.random() * CATEGORIES.length)

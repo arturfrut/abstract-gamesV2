@@ -7,15 +7,13 @@ import { RollingScreen } from '@/components/sound-game/RollingScreen'
 import { PlayingScreen } from '@/components/sound-game/PlayingScreen'
 import { TurnEndScreen } from '@/components/sound-game/TurnEndScreen'
 import { ResultsScreen } from '@/components/sound-game/ResultsScreen'
-import { Team } from '@/types/sound-game'
-
+import { Difficulty, Team } from '@/types/sound-game'
 export default function SoundGamePage() {
   const [state, dispatch] = useReducer(gameReducer, initialState)
 
-  function handleStart(teams: Team[], timer: number, rounds: number) {
-    dispatch({ type: 'START_GAME', teams, timer, rounds })
+  function handleStart(teams: Team[], timer: number, rounds: number, maxDifficulty: Difficulty) {
+    dispatch({ type: 'START_GAME', teams, timer, rounds, maxDifficulty })
   }
-
   return (
     <>
       {state.phase === 'setup' && (
