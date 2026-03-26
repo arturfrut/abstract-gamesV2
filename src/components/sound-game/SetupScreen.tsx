@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Team } from '@/types/sound-game'
+import { Team, Difficulty } from '@/types/sound-game'
 import Link from 'next/link'
 
 interface SetupScreenProps {
-  onStart: (teams: Team[], timer: number, rounds: number) => void
+  onStart: (teams: Team[], timer: number, rounds: number, maxDifficulty: Difficulty) => void
 }
 
 const TIMER_OPTIONS = [30, 60, 90]
@@ -18,6 +18,7 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
   ])
   const [timer, setTimer] = useState(60)
   const [rounds, setRounds] = useState(3)
+  const [maxDifficulty, setMaxDifficulty] = useState<Difficulty>(3)
 
   function addTeam() {
     if (teams.length >= 6) return
@@ -36,7 +37,7 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
 
   function handleStart() {
     if (teams.length < 2) return
-    onStart(teams, timer, rounds)
+    onStart(teams, timer, rounds, maxDifficulty)
   }
 
   return (
@@ -45,14 +46,12 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
         <h1 className="text-3xl font-bold tracking-tight">That Sound Game</h1>
         <p className="text-muted-foreground mt-1">Configurá la partida antes de empezar</p>
         <Link
-    href="/games/sound-game/rules"
-    className="text-sm text-brand-blue hover:opacity-80 transition-opacity"
-  >
-    ¿Cómo se juega? →
-  </Link>
+          href="/games/sound-game/rules"
+          className="text-sm text-brand-blue hover:opacity-80 transition-opacity"
+        >
+          ¿Cómo se juega? →
+        </Link>
       </div>
-
-      
 
       {/* Equipos */}
       <div className="flex flex-col gap-4">
@@ -123,6 +122,32 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
               {r}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Dificultad */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold">Dificultad</h2>
+          <span className="text-sm text-muted-foreground">
+            {maxDifficulty === 1 ? 'Solo fáciles' : maxDifficulty === 2 ? 'Hasta media' : 'Todas'}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <input
+            type="range"
+            min={1}
+            max={3}
+            step={1}
+            value={maxDifficulty}
+            onChange={(e) => setMaxDifficulty(Number(e.target.value) as Difficulty)}
+            className="w-full accent-brand-blue"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>⭐ Fácil</span>
+            <span>⭐⭐ Media</span>
+            <span>⭐⭐⭐ Difícil</span>
+          </div>
         </div>
       </div>
 

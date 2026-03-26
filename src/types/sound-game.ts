@@ -32,4 +32,5 @@ export interface GameState {
   isPlaying: boolean
   roundsTotal: number
   roundsCurrent: number
+  maxDifficulty: Difficulty
 }

@@ -2,7 +2,7 @@ import { GameState, Team } from '@/types/sound-game'
 import { getRandomCategory, getRandomCard } from './utils'
 
 type Action =
-  | { type: 'START_GAME'; teams: Team[]; timer: number; rounds: number }
+  | { type: 'START_GAME'; teams: Team[]; timer: number; rounds: number; maxDifficulty: Difficulty }
   | { type: 'ROLL_DICE' }
   | { type: 'START_TURN' }
   | { type: 'CORRECT' }
@@ -24,6 +24,7 @@ export const initialState: GameState = {
   isPlaying: false,
   roundsTotal: 3,
   roundsCurrent: 0,
+  maxDifficulty: 3, 
 }
 
 export function gameReducer(state: GameState, action: Action): GameState {
@@ -37,6 +38,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
         timer: action.timer,
         timeLeft: action.timer,
         roundsTotal: action.rounds,
+        maxDifficulty: action.maxDifficulty,
       }
 
     case 'ROLL_DICE': {
@@ -48,42 +50,40 @@ export function gameReducer(state: GameState, action: Action): GameState {
     }
 
     case 'START_TURN': {
-      const card = getRandomCard(state.currentCategory!, state.usedCardIds)
-      return {
-        ...state,
-        phase: 'playing',
-        currentCard: card,
-        usedCardIds: [...state.usedCardIds, card.id],
-        timeLeft: state.timer,
-        isPlaying: true,
-      }
-    }
+  const card = getRandomCard(state.currentCategory!, state.usedCardIds, state.maxDifficulty)
+  return {
+    ...state,
+    phase: 'playing',
+    currentCard: card,
+    usedCardIds: [...state.usedCardIds, card.id],
+    timeLeft: state.timer,
+    isPlaying: true,
+  }
+}
 
-    case 'CORRECT': {
-      const points = state.currentCard?.difficulty ?? 1
-      const updatedTeams = state.teams.map((team, index) =>
-        index === state.currentTeamIndex
-          ? { ...team, score: team.score + points }
-          : team
-      )
-      const nextCard = getRandomCard(state.currentCategory!, state.usedCardIds)
-      return {
-        ...state,
-        teams: updatedTeams,
-        currentCard: nextCard,
-        usedCardIds: [...state.usedCardIds, nextCard.id],
-      }
-    }
-
+case 'CORRECT': {
+  const points = state.currentCard?.difficulty ?? 1
+  const updatedTeams = state.teams.map((team, index) =>
+    index === state.currentTeamIndex
+      ? { ...team, score: team.score + points }
+      : team
+  )
+  const nextCard = getRandomCard(state.currentCategory!, state.usedCardIds, state.maxDifficulty)
+  return {
+    ...state,
+    teams: updatedTeams,
+    currentCard: nextCard,
+    usedCardIds: [...state.usedCardIds, nextCard.id],
+  }
+}
     case 'SKIP': {
-      const nextCard = getRandomCard(state.currentCategory!, state.usedCardIds)
-      return {
-        ...state,
-        currentCard: nextCard,
-        usedCardIds: [...state.usedCardIds, nextCard.id],
-      }
-    }
-
+  const nextCard = getRandomCard(state.currentCategory!, state.usedCardIds, state.maxDifficulty)
+  return {
+    ...state,
+    currentCard: nextCard,
+    usedCardIds: [...state.usedCardIds, nextCard.id],
+  }
+}
     case 'TICK':
       return {
         ...state,
